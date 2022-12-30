@@ -35,19 +35,26 @@ const addNote = async (req, res) => {
                         // Loop to upload all images
                         for (const element of [].concat(req.files.image)) {
                             // Set reference for image in cloud
-                            storageRef = ref(storage, `images/${newNote.userId}-${docRef.id}-${Date.now().toString()}-${element.name}`)
-                            // Add url to note
-                            newNote.images.push(storageRef.bucket)
+                            storageRef = ref(storage, `images/${newNote.userId}/${docRef.id}/${Date.now().toString()}-${element.name}`)
                             // Upload image
-                            uploadBytes(storageRef, element.data, {
+                            await uploadBytes(storageRef, element.data, {
                                 contentType: 'image'
                             })
+                            // Add url to note
+                            newNote.images.push(await getDownloadURL(storageRef))
                         }
                     }
                 }
                 // Save note
-                docRef.set(newNote)
-                resolve(newNote)
+                await docRef.set(newNote)
+                const docSnapshot = await docRef.get()
+                const data = {
+                    id: docSnapshot.id,
+                    ...docSnapshot.data()
+                }
+                delete data.userId
+                console.log(data)
+                resolve(data)
             } catch (error) {
                 reject(error)
             }
