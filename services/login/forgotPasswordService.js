@@ -11,40 +11,42 @@ const forgotPassword = async (req, res) => {
         })
     }
     try {
-        await db.collection('Logins').where('email','==',email).get().then((snapshot) => {
-            const list = snapshot.docs
-            if (list.length) {
-                const randomNumber = Math.floor(Math.random()*1000000)
-                const mailOptions = {
-                    from: hostEmail,
-                    to: list[0].get('email'),
-                    subject: 'You have reset your password for NoteApp',
-                    text: `New password is ${randomNumber}\nHaving a good experience with NoteApp <3`
-                  };
-                transporter.sendMail(mailOptions,(error, info) => {
-                    if (error) {
-                        res.status(code.bad_request).json({
-                            code: code.bad_request,
-                            message: error.message,
-                            data: null
-                        })
-                    } else {
-                        list[0].ref.update({password: randomNumber.toString()})
-                        res.status(code.success).json({
-                            code: code.success,
-                            message: 'Reset password successfully',
-                            data: null
-                        })
-                    }
-                })
-            } else {
-                res.status(code.notfound).json({
-                    code: code.notfound,
-                    message: 'Email not found',
-                    data: null
-                })
-            }
-        })
+        const querySnapshot = await db.collection('Logins').where('email','==',email).get()
+        const list = querySnapshot.docs
+        if (list.length) {
+            const doc = list[0]
+            const randomNumber = Math.floor(Math.random()*1000000)
+            const mailOptions = {
+                from: hostEmail,
+                to: doc.get('email'),
+                subject: 'You have reset your password for NoteApp',
+                text: `New password is ${randomNumber}\nHaving a good experience with NoteApp <3`
+            };
+            transporter.sendMail(mailOptions,(error, info) => {
+                if (error) {
+                    console.log(error.message)
+                    console.log(info)
+                    res.status(code.bad_request).json({
+                        code: code.bad_request,
+                        message: error.message,
+                        data: null
+                    })
+                } else {
+                    doc.ref.update({password: randomNumber.toString()})
+                    res.status(code.success).json({
+                        code: code.success,
+                        message: 'Reset password successfully',
+                        data: null
+                    })
+                }
+            })
+        } else {
+            res.status(code.notfound).json({
+                code: code.notfound,
+                message: 'Email not found',
+                data: null
+            })
+        }
     } catch (error) {
         res.status(code.bad_request).json({
             code: code.bad_request,

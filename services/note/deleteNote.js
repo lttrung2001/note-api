@@ -17,7 +17,7 @@ const deleteNote = async (req, res) => {
             ... snapshot.data()
         }
         delete data.userId
-        await doc.delete()
+        doc.delete()
         return res.status(code.success).json({
             code: code.success,
             message: 'Delete note successfully',

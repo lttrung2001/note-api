@@ -54,19 +54,17 @@ const editNote = async (req, res) => {
                 reject(error)
             }
         }).then(async (result) => {
-            await docRef.update(result).then(async () => {
-                await docRef.get().then((snapshot) => {
-                    const data = {
-                        id: snapshot.id,
-                        ...snapshot.data()
-                    }
-                    delete data.userId
-                    return res.status(code.success).json({
-                        code: code.success,
-                        message: 'Edit note successfully',
-                        data: data
-                    })
-                })
+            await docRef.update(result)
+            const docSnapshot = await docRef.get()
+            const data = {
+                id: docSnapshot.id,
+                ...docSnapshot.data()
+            }
+            delete data.userId
+            return res.status(code.success).json({
+                code: code.success,
+                message: 'Edit note successfully',
+                data: data
             })
         }, (error) => {
             console.log(error)

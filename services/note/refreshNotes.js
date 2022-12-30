@@ -23,17 +23,17 @@ const refreshNotes = async (req, res) => {
 
     try {
         // Select note of userId
-        const querySnap = db.collection('Notes')
-            .where('userId', '==', userId)
-        const lastPageIndex = Math.floor((await querySnap.get()).docs.length/limit)
-        const resultSnap = querySnap
+        const userNoteQuery = db.collection('Notes').where('userId', '==', userId)
+        const userNoteSnapshot = await userNoteQuery.get()
+        const lastPageIndex = Math.floor(userNoteSnapshot.docs.length/limit)
+        const pagingNoteQuery = await userNoteQuery
         .orderBy('editAt', 'desc')
         .orderBy('createAt','desc')
         .limit(limit*(page+1))
         .get()
         const hasNextPage = page < lastPageIndex
         const hasPrePage = page > 0
-        const data = (await resultSnap).docs.map((doc) => ({
+        const data =  pagingNoteQuery.docs.map((doc) => ({
             id: doc.id,
             title: doc.get('title'),
             description: doc.get('description'),

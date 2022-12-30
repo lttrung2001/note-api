@@ -11,31 +11,29 @@ const changePasswordService = async (req, res) => {
         })
     }
     try {
-        await db.collection('Logins').where('email','==',email).get().then((snapshot) => {
-            const list = snapshot.docs
-            const doc = list[0]
-            if (list.length && doc.get('password') === oldPassword) {
-                doc.ref.update({password: newPassword})
-                doc.ref.get().then((snapshot) => {
-                    const data = {
-                        id: snapshot.id,
-                        ... snapshot.data()
-                    }
-                    return res.status(code.success).json({
-                        code: code.success,
-                        message: 'Change password successfully',
-                        data: data
-                    })
-                })
-                
-            } else {
-                return res.status(code.unauthorized).json({
-                    code: code.unauthorized,
-                    message: 'Invalid credentials',
-                    data: null
-                })
+        const querySnapshot = await db.collection('Logins').where('email','==',email).get()
+        const list = querySnapshot.docs
+        if (list.length && list[0].get('password') === oldPassword) {
+            const docRef = list[0].ref
+            docRef.update({password: newPassword})
+            const docSnapshot = docRef.get()
+            const data = {
+                id: docSnapshot.id,
+                ... docSnapshot.data()
             }
-        })
+            return res.status(code.success).json({
+                code: code.success,
+                message: 'Change password successfully',
+                data: data
+            })
+            
+        } else {
+            return res.status(code.unauthorized).json({
+                code: code.unauthorized,
+                message: 'Invalid credentials',
+                data: null
+            })
+        }
     } catch (error) {
         return res.status(code.bad_request).json({
             code: code.bad_request,

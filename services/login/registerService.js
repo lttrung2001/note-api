@@ -10,30 +10,26 @@ const registerService = async (req, res) => {
         })
     }
     try {
-        await db.collection('Logins').where('email','==',email).get().then((snapshot) => {
-            const list = snapshot.docs
-            if (!list.length) {
-                db.collection('Logins').add({email: email, password: password}).then((docRef) => {
-                    docRef.get().then((snapshot) => {
-                        const data = {
-                            id: snapshot.id,
-                            ...snapshot.data()
-                        }
-                        return res.status(code.success).json({
-                            code: code.success,
-                            message: 'Register successfully',
-                            data: data
-                        })
-                    })
-                })
-            } else {
-                return res.status(code.conflict).json({
-                    code: code.conflict,
-                    message: 'Account exists',
-                    data: null
-                })
+        const querySnapshot = await db.collection('Logins').where('email','==',email).get()
+        const list = snapshot.docs
+        if (!list.length) {
+            const docSnapshot = await (await db.collection('Logins').add({email: email, password: password})).get()
+            const data = {
+                id: docSnapshot.id,
+                ...docSnapshot.data()
             }
-        })
+            return res.status(code.success).json({
+                code: code.success,
+                message: 'Register successfully',
+                data: data
+            })
+        } else {
+            return res.status(code.conflict).json({
+                code: code.conflict,
+                message: 'Account exists',
+                data: null
+            })
+        }
     } catch (error) {
         return res.status(code.unauthorized).json({
             code: code.unauthorized,
