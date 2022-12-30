@@ -38,17 +38,17 @@ const editNote = async (req, res) => {
                         for (const element of [].concat(req.files.image)) {
                             // Set reference for image in cloud
                             storageRef = ref(storage, `images/${snapshot.get('userId')}-${docRef.id}-${Date.now().toString()}-${element.name}`)
-                            // Add url to note
-                            noteEdit.images.push(storageRef.bucket)
                             // Upload image
-                            uploadBytes(storageRef, element.data, {
+                            await uploadBytes(storageRef, element.data, {
                                 contentType: 'image'
                             })
+                            // Add url to note
+                            console.log(await getDownloadURL(storageRef))
+                            noteEdit.images.push(await getDownloadURL(storageRef))
                         }
                     }
                 }
                 // Save note
-                docRef.update(noteEdit)
                 resolve(noteEdit)
             } catch (error) {
                 reject(error)
