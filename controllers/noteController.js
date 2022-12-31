@@ -27,4 +27,8 @@ router.post('/upload-note-images', middleware.verifyAccessToken, async (req, res
     return await notesService.uploadNoteImages(req, res)
 })
 
+router.get('/get-note-detail', middleware.verifyAccessToken, async (req, res) => {
+    return await notesService.getNoteDetail(req, res)
+})
+
 module.exports = router
