@@ -53,7 +53,6 @@ const addNote = async (req, res) => {
                     ...docSnapshot.data()
                 }
                 delete data.userId
-                console.log(data)
                 resolve(data)
             } catch (error) {
                 reject(error)
