@@ -5,8 +5,8 @@ const { getStorage, ref, uploadBytes, getDownloadURL } = require('firebase/stora
 const addNote = async (req, res) => {
     const note = JSON.parse(req.body.note)
     if (!(note.title || note.description || req.files)) {
-        return res.status(code.forbidden).json({
-            code: code.forbidden,
+        return res.status(code.bad_request).json({
+            code: code.bad_request,
             message: 'At least 1 input required',
             data: null
         })
@@ -64,17 +64,15 @@ const addNote = async (req, res) => {
                 data: result
             })
         }, (error) => { // Reject function
-            console.log(error.message)
-            return res.status(code.bad_request).json({
-                code: code.bad_request,
+            return res.status(code.internal_server_error).json({
+                code: code.internal_server_error,
                 message: 'Add note failed because of uploading images failed',
                 data: null
             })
         })
     } catch (error) {
-        console.log(error.message)
-        return res.status(code.bad_request).json({
-            code: code.bad_request,
+        return res.status(code.internal_server_error).json({
+            code: code.internal_server_error,
             message: 'Create note failed',
             data: null
         })

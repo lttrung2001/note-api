@@ -3,15 +3,15 @@ const {db} = require('../../utils/admin')
 const registerService = async (req, res) => {
     const {email, password} = req.body
     if (!(email && password)) {
-        return res.status(code.forbidden).json({
-            code: code.forbidden,
+        return res.status(code.bad_request).json({
+            code: code.bad_request,
             message: 'All input is required',
             data: null
         })
     }
     try {
         const querySnapshot = await db.collection('Logins').where('email','==',email).get()
-        const list = snapshot.docs
+        const list = querySnapshot.docs
         if (!list.length) {
             const docSnapshot = await (await db.collection('Logins').add({email: email, password: password})).get()
             const data = {
@@ -31,9 +31,9 @@ const registerService = async (req, res) => {
             })
         }
     } catch (error) {
-        return res.status(code.unauthorized).json({
-            code: code.unauthorized,
-            message: error,
+        return res.status(code.internal_server_error).json({
+            code: code.internal_server_error,
+            message: error.message,
             data: null
         })
     }

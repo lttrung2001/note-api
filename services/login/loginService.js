@@ -5,8 +5,8 @@ const jwt = require('jsonwebtoken')
 const loginService = async (req, res) => {
     const {email, password} = req.body
     if (!(email && password)) {
-        return res.status(code.forbidden).json({
-            code: code.forbidden,
+        return res.status(code.bad_request).json({
+            code: code.bad_request,
             message: 'All input is required',
             data: null
         })
@@ -33,9 +33,9 @@ const loginService = async (req, res) => {
             data: null
         })
     } catch(error) {
-        return res.status(code.unauthorized).json({
-            code: code.unauthorized,
-            message: error,
+        return res.status(code.internal_server_error).json({
+            code: code.internal_server_error,
+            message: error.message,
             data: null
         })
     }
