@@ -6,14 +6,14 @@ const editNote = async (req, res) => {
     const id = req.query.id
     const { noteTitle, noteDescription } = req.body
     if (!(noteTitle || noteDescription || req.files)) {
-        return res.status(code.forbidden).json({
-            code: code.forbidden,
+        return res.status(code.bad_request).json({
+            code: code.bad_request,
             message: 'At least 1 input required',
             data: null
         })
     } else if (!id) {
-        return res.status(code.forbidden).json({
-            code: code.forbidden,
+        return res.status(code.bad_request).json({
+            code: code.bad_request,
             message: 'Id is required',
             data: null
         })
@@ -26,8 +26,8 @@ const editNote = async (req, res) => {
         const noteEdit = {
             title: noteTitle,
             description: noteDescription,
-            createAt: snapshot.get('createAt'),
             editAt: Date.now(),
+            createAt: snapshot.get('createAt'),
             images: snapshot.get('images')
         }
         new Promise(async (resolve, reject) => {
@@ -67,18 +67,16 @@ const editNote = async (req, res) => {
                 data: data
             })
         }, (error) => {
-            console.log(error)
-            return res.status(code.bad_request).json({
-                code: code.bad_request,
+            return res.status(code.internal_server_error).json({
+                code: code.internal_server_error,
                 message: 'Edit note failed because of uploading images failed',
                 data: null
             })
         })
     } catch (error) {
-        console.log(error)
-        return res.status(code.bad_request).json({
-            code: code.bad_request,
-            message: error.message,
+        return res.status(code.internal_server_error).json({
+            code: code.internal_server_error,
+            message: "Edit note failed",
             data: null
         })
     }

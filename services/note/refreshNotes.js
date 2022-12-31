@@ -39,7 +39,8 @@ const refreshNotes = async (req, res) => {
             description: doc.get('description'),
             editAt: doc.get('editAt'),
             createAt: doc.get('createAt'),
-            images: doc.get('images')
+            // images: doc.get('images')
+            images: []
         }))
         return res.status(code.success).json({
             code: code.success,
@@ -51,9 +52,9 @@ const refreshNotes = async (req, res) => {
             }
         })
     } catch (error) {
-        return res.status(code.bad_request).json({
-            code: code.bad_request,
-            message: error.message,
+        return res.status(code.notfound).json({
+            code: code.notfound,
+            message: "Refresh notes failed",
             data: null
         })
     }

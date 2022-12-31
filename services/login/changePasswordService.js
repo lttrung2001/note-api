@@ -4,8 +4,8 @@ const {db} = require('../../utils/admin')
 const changePasswordService = async (req, res) => {
     const {email, oldPassword, newPassword} = req.body
     if (!(email && oldPassword && newPassword)) {
-        return res.status(code.forbidden).json({
-            code: code.forbidden,
+        return res.status(code.bad_request).json({
+            code: code.bad_request,
             message: 'All input is required',
             data: null
         })
@@ -15,11 +15,11 @@ const changePasswordService = async (req, res) => {
         const list = querySnapshot.docs
         if (list.length && list[0].get('password') === oldPassword) {
             const docRef = list[0].ref
-            docRef.update({password: newPassword})
-            const docSnapshot = docRef.get()
+            await docRef.update({password: newPassword})
+            const docSnapshot = await docRef.get()
             const data = {
                 id: docSnapshot.id,
-                ... docSnapshot.data()
+                ...docSnapshot.data()
             }
             return res.status(code.success).json({
                 code: code.success,
@@ -35,8 +35,8 @@ const changePasswordService = async (req, res) => {
             })
         }
     } catch (error) {
-        return res.status(code.bad_request).json({
-            code: code.bad_request,
+        return res.status(code.internal_server_error).json({
+            code: code.internal_server_error,
             message: error.message,
             data: null
         })

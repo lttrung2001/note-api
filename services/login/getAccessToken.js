@@ -5,8 +5,8 @@ const getAccessToken = async (req, res) => {
     const authoriztion = req.headers.authorization
     const token = authoriztion.split(' ')[1]
     if (!token) {
-        return res.status(code.forbidden).json({
-            code: code.forbidden,
+        return res.status(code.bad_request).json({
+            code: code.bad_request,
             message: 'Token is required for authentication',
             data: null
         })
@@ -24,8 +24,8 @@ const getAccessToken = async (req, res) => {
             data: accessToken
         })
     } catch (error) {
-        return res.status(code.unauthorized).json({
-            code: code.unauthorized,
+        return res.status(code.bad_request).json({
+            code: code.bad_request,
             message: 'Invalid token',
             data: null
         })

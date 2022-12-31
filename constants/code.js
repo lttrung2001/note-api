@@ -7,4 +7,5 @@ module.exports = {
     success: 200,
     notfound: 404,
     expired: 410,
+    internal_server_error: 500
 }

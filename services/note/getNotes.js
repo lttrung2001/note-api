@@ -43,8 +43,9 @@ const getNotes = async (req, res) => {
                 title: doc.get('title'),
                 description: doc.get('description'),
                 editAt: doc.get('editAt'),
-                createAt: doc.get('createAt'),
-                images: doc.get('images')
+                createAt: doc.get('createAt'),  
+                // images: doc.get('images')
+                images: []
             }))
             return res.status(code.success).json({
                 code: code.success,
@@ -56,8 +57,8 @@ const getNotes = async (req, res) => {
                 }
             })
         } else {
-            return res.status(code.bad_request).json({
-                code: code.bad_request,
+            return res.status(code.notfound).json({
+                code: code.notfound,
                 message: 'No more notes to load',
                 data: {
                     data: null,
@@ -67,9 +68,9 @@ const getNotes = async (req, res) => {
             })
         }
     } catch (error) {
-        return res.status(code.bad_request).json({
-            code: code.bad_request,
-            message: error.message,
+        return res.status(code.notfound).json({
+            code: code.notfound,
+            message: "Get notes failed",
             data: null
         })
     }

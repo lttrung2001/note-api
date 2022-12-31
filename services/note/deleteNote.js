@@ -4,8 +4,8 @@ const { getStorage, ref, listAll, deleteObject } = require("firebase/storage")
 const deleteNote = async (req, res) => {
     const id = req.query.id // note id
     if (!id) {
-        return res.status(code.forbidden).json({
-            code: code.forbidden,
+        return res.status(code.bad_request).json({
+            code: code.bad_request,
             message: 'Id is required',
             data: null
         })
@@ -47,9 +47,8 @@ const deleteNote = async (req, res) => {
             data: data
         })
     } catch (error) {
-        console.log(error.message)
-        return res.status(code.bad_request).json({
-            code: code.bad_request,
+        return res.status(code.internal_server_error).json({
+            code: code.internal_server_error,
             message: 'Delete note failed',
             data: null
         })
