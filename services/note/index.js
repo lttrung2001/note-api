@@ -3,6 +3,7 @@ const addNote = require('./addNote')
 const editNote = require('./editNote')
 const deleteNote = require('./deleteNote')
 const refreshNotes = require('./refreshNotes')
+const getNoteDetail = require('./getNoteDetail')
 
 module.exports = {
     getNotes,
@@ -10,4 +11,5 @@ module.exports = {
     editNote,
     deleteNote,
     refreshNotes,
+    getNoteDetail,
 }
