@@ -4,7 +4,7 @@ const { app } = require('../../utils/firebase')
 const { getStorage, ref, deleteObject } = require('firebase/storage')
 
 const deleteImage = async (req, res) => {
-    const imageUrl = decodeURI(req.query.url)
+    const imageUrl = decodeURIComponent(req.query.url)
     const noteId = req.query.noteId
 
     if (imageUrl == null || noteId == null) {
