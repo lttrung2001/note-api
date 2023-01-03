@@ -11,11 +11,11 @@ const deleteImage = async (req, res) => {
     const imageRef = ref(storage, imageUrl)
 
     try {
-        deleteObject(imageRef)
+        await deleteObject(imageRef)
         const docRef = db.collection('Notes').doc(noteId)
         const docSnapshot = await docRef.get()
         const imagesAfterRemove = docSnapshot.get('images').filter(image => image !== imageUrl)
-        docRef.update({
+        await docRef.update({
             images: imagesAfterRemove
         })
 
