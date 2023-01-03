@@ -1,5 +1,5 @@
-const deleteImage = require('./deleteImage')
+const deleteImageService = require('./deleteImageService')
 
 module.exports = {
-    deleteImage
+    deleteImageService,
 }
