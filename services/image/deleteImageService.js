@@ -35,7 +35,7 @@ const deleteImage = async (req, res) => {
     } catch (error) {
         return res.status(code.internal_server_error).json({
             code: code.internal_server_error,
-            message: "Delete image failed",
+            message: error.message,
             data: null
         })
     }
