@@ -4,18 +4,18 @@ const { app } = require('../../utils/firebase')
 const { getStorage, ref, deleteObject } = require('firebase/storage')
 
 const deleteImage = async (req, res) => {
-    const imageUrl = req.query.url
+    const imageUrl = req.body
     const noteId = req.query.noteId
 
     const storage = getStorage(app)
     const imageRef = ref(storage, imageUrl)
 
     try {
-        await deleteObject(imageRef)
+        deleteObject(imageRef)
         const docRef = db.collection('Notes').doc(noteId)
         const docSnapshot = await docRef.get()
         const imagesAfterRemove = docSnapshot.get('images').filter(image => image !== imageUrl)
-        await docRef.update({
+        docRef.update({
             images: imagesAfterRemove
         })
 
