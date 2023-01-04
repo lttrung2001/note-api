@@ -44,7 +44,7 @@ const editNote = async (req, res) => {
                             )
                         }
                         // Wait until all images uploaded
-                        noteEdit.images.push(await Promise.all(promiseArray))
+                        noteEdit.images = await Promise.all(promiseArray)
                     }
                 }
                 // Save note
