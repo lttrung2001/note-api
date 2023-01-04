@@ -23,46 +23,46 @@ const addNote = async (req, res) => {
     // Get storage instance
     const storage = getStorage(app)
     let storageRef = null
-            try {
-                const docRef = db.collection('Notes').doc()
-                // Note has files
-                if (req.files) {
-                    // Files are images
-                    if (req.files.image) {
-                        // Loop to upload all images
-                        const promiseArray = []
-                        for (const element of [].concat(req.files.image)) {
-                            // Set reference for image in cloud
-                            storageRef = ref(storage, `images/${newNote.userId}/${docRef.id}/${Date.now().toString()}-${element.name}`)
-                            promiseArray.push(
-                                uploadImage(storageRef, element.data)
-                            )
-                        }
-                        // Wait until all images uploaded
-                        newNote.images.push(await Promise.all(promiseArray))
-                    }
+    try {
+        const docRef = db.collection('Notes').doc()
+        // Note has files
+        if (req.files) {
+            // Files are images
+            if (req.files.image) {
+                // Loop to upload all images
+                const promiseArray = []
+                for (const element of [].concat(req.files.image)) {
+                    // Set reference for image in cloud
+                    storageRef = ref(storage, `images/${newNote.userId}/${docRef.id}/${Date.now().toString()}-${element.name}`)
+                    promiseArray.push(
+                        uploadImage(storageRef, element.data)
+                    )
                 }
-                // Save note
-                await docRef.set(newNote)
-                const docSnapshot = await docRef.get()
-                const data = {
-                    id: docSnapshot.id,
-                    ...docSnapshot.data()
-                }
-
-                delete data.userId
-                return res.status(code.success).json({
-                    code: code.success,
-                    message: 'Add note successfully',
-                    data: data
-                })
-            } catch (error) {
-                return res.status(code.internal_server_error).json({
-                    code: code.internal_server_error,
-                    message: 'Add note failed because of uploading images failed',
-                    data: null
-                })
+                // Wait until all images uploaded
+                newNote.images.push(await Promise.all(promiseArray))
             }
+        }
+        // Save note
+        await docRef.set(newNote)
+        const docSnapshot = await docRef.get()
+        const data = {
+            id: docSnapshot.id,
+            ...docSnapshot.data()
+        }
+
+        delete data.userId
+        return res.status(code.success).json({
+            code: code.success,
+            message: 'Add note successfully',
+            data: data
+        })
+    } catch (error) {
+        return res.status(code.internal_server_error).json({
+            code: code.internal_server_error,
+            message: error.message,
+            data: null
+        })
+    }
 }
 
 const uploadImage = async (ref, data) => {
