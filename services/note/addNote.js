@@ -42,7 +42,7 @@ const addNote = async (req, res) => {
                             )
                         }
                         // Wait until all images uploaded
-                        await Promise.all(promiseArray)
+                        newNote.images.push(await Promise.all(promiseArray))
                     }
                 }
                 // Save note
