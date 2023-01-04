@@ -1,7 +1,7 @@
 const code = require('../../constants/code')
 const { admin, db } = require('../../utils/admin')
 const { app } = require('../../utils/firebase')
-const { getStorage, ref, uploadBytes } = require('firebase/storage')
+const { getStorage, ref, uploadBytes, getDownloadURL } = require('firebase/storage')
 const editNote = async (req, res) => {
     const id = req.query.id
     const { noteTitle, noteDescription } = req.body

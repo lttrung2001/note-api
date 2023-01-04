@@ -23,9 +23,6 @@ const addNote = async (req, res) => {
     // Get storage instance
     const storage = getStorage(app)
     let storageRef = null
-    try {
-        // Promise to save images of note
-        new Promise(async (resolve, reject) => {
             try {
                 const docRef = db.collection('Notes').doc()
                 // Note has files
@@ -52,31 +49,20 @@ const addNote = async (req, res) => {
                     id: docSnapshot.id,
                     ...docSnapshot.data()
                 }
+
                 delete data.userId
-                resolve(data)
+                return res.status(code.success).json({
+                    code: code.success,
+                    message: 'Add note successfully',
+                    data: data
+                })
             } catch (error) {
-                reject(error)
+                return res.status(code.internal_server_error).json({
+                    code: code.internal_server_error,
+                    message: 'Add note failed because of uploading images failed',
+                    data: null
+                })
             }
-        }).then((result) => { // Resolve function
-            return res.status(code.success).json({
-                code: code.success,
-                message: 'Add note successfully',
-                data: result
-            })
-        }, (error) => { // Reject function
-            return res.status(code.internal_server_error).json({
-                code: code.internal_server_error,
-                message: 'Add note failed because of uploading images failed',
-                data: null
-            })
-        })
-    } catch (error) {
-        return res.status(code.internal_server_error).json({
-            code: code.internal_server_error,
-            message: 'Create note failed',
-            data: null
-        })
-    }
 }
 
 const uploadImage = async (ref, data) => {
