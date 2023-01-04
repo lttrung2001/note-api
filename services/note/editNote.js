@@ -1,7 +1,7 @@
 const code = require('../../constants/code')
 const { admin, db } = require('../../utils/admin')
 const { app } = require('../../utils/firebase')
-const { getStorage, ref, uploadBytes, getDownloadURL, listAll, deleteObject } = require('firebase/storage')
+const { getStorage, ref, uploadBytes } = require('firebase/storage')
 const editNote = async (req, res) => {
     const id = req.query.id
     const { noteTitle, noteDescription } = req.body
@@ -38,13 +38,11 @@ const editNote = async (req, res) => {
                         for (const element of [].concat(req.files.image)) {
                             // Set reference for image in cloud
                             storageRef = ref(storage, `images/${snapshot.get('userId')}-${docRef.id}-${Date.now().toString()}-${element.name}`)
+                            noteEdit.images.push(storageRef.fullPath)
                             // Upload image
-                            await uploadBytes(storageRef, element.data, {
+                            uploadBytes(storageRef, element.data, {
                                 contentType: 'image'
                             })
-                            // Add url to note
-                            console.log(await getDownloadURL(storageRef))
-                            noteEdit.images.push(await getDownloadURL(storageRef))
                         }
                     }
                 }

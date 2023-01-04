@@ -36,12 +36,11 @@ const addNote = async (req, res) => {
                         for (const element of [].concat(req.files.image)) {
                             // Set reference for image in cloud
                             storageRef = ref(storage, `images/${newNote.userId}/${docRef.id}/${Date.now().toString()}-${element.name}`)
+                            newNote.images.push(storageRef.fullPath)
                             // Upload image
-                            await uploadBytes(storageRef, element.data, {
+                            uploadBytes(storageRef, element.data, {
                                 contentType: 'image'
                             })
-                            // Add url to note
-                            newNote.images.push(await getDownloadURL(storageRef))
                         }
                     }
                 }

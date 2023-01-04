@@ -13,6 +13,7 @@ app.use(fileUpload({
 }));
 app.use('/', controllers.loginController)
 app.use('/', controllers.noteController)
+app.use('/image', controllers.imageController)
 
 app.listen(process.env.PORT || 3000, () => {
   console.log(`Server is listening on port: ${process.env.PORT || 3000}`)
