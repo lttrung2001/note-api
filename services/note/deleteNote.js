@@ -12,7 +12,7 @@ const deleteNote = async (req, res) => {
     }
     try {
         const doc = db.collection('Notes').doc(id)
-        const snapshot = await doc.get()
+        let snapshot = await doc.get()
 
         const storage = getStorage();
 
@@ -21,10 +21,12 @@ const deleteNote = async (req, res) => {
 
         // Find all the prefixes and items.
         listAll(listRef)
-        .then((res) => {
+        .then(async (res) => {
+            const promiseArray = []
             res.items.forEach((itemRef) => {
-                deleteObject(itemRef)
+                promiseArray.push(deleteObject(itemRef))
             });
+            await Promise.all(promiseArray)
         }).catch((error) => {
             console.log(error.message)
             return res.status(code.bad_request).json({
@@ -33,6 +35,8 @@ const deleteNote = async (req, res) => {
                 data: null
             })
         });
+
+        snapshot = await doc.get()
 
         const data = {
             id: snapshot.id,

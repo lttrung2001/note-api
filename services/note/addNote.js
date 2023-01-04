@@ -33,15 +33,16 @@ const addNote = async (req, res) => {
                     // Files are images
                     if (req.files.image) {
                         // Loop to upload all images
+                        const promiseArray = []
                         for (const element of [].concat(req.files.image)) {
                             // Set reference for image in cloud
                             storageRef = ref(storage, `images/${newNote.userId}/${docRef.id}/${Date.now().toString()}-${element.name}`)
-                            newNote.images.push(storageRef.fullPath)
-                            // Upload image
-                            uploadBytes(storageRef, element.data, {
-                                contentType: 'image'
-                            })
+                            promiseArray.push(
+                                uploadImage(storageRef, element.data)
+                            )
                         }
+                        // Wait until all images uploaded
+                        await Promise.all(promiseArray)
                     }
                 }
                 // Save note
@@ -77,4 +78,10 @@ const addNote = async (req, res) => {
         })
     }
 }
+
+const uploadImage = async (ref, data) => {
+    await uploadBytes(ref, data, { contentType: 'image' })
+    return getDownloadURL(ref)
+}
+
 module.exports = addNote

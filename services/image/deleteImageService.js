@@ -21,7 +21,7 @@ const deleteImage = async (req, res) => {
     try {
         const docRef = db.collection('Notes').doc(noteId)
         let docSnapshot = await docRef.get()
-        const imagesAfterRemove = docSnapshot.get('images').filter(image => image !== imageUrl)
+        const imagesAfterRemove = docSnapshot.get('images').filter((image) => {image !== imageUrl})
         await Promise.all([
             deleteObject(imageRef),
             docRef.update({
