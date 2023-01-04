@@ -25,7 +25,7 @@ const deleteImage = async (req, res) => {
         await Promise.all([
             deleteObject(imageRef),
             docRef.update({
-                images: imagesAfterRemove
+                "image": imagesAfterRemove
             })
         ])
 
