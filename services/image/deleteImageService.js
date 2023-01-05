@@ -24,12 +24,10 @@ const deleteImage = async (req, res) => {
         let images = docSnapshot.get('images')
         const deleteDocumentIndex = images.indexOf(imageUrl)
         images.splice(deleteDocumentIndex, 1)
-        await Promise.all([
-            deleteObject(imageRef),
-            docRef.update({
-                images: images
-            })
-        ])
+        await docRef.update({
+            images: images
+        })
+        deleteObject(imageRef)
 
         return res.status(code.success).json({
             code: code.success,
