@@ -70,7 +70,7 @@ const getNotes = async (req, res) => {
     } catch (error) {
         return res.status(code.notfound).json({
             code: code.notfound,
-            message: "Get notes failed",
+            message: error.message,
             data: null
         })
     }

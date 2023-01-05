@@ -20,62 +20,48 @@ const editNote = async (req, res) => {
     }
     const storage = getStorage(app)
     let storageRef = null
+    const docRef = db.collection('Notes').doc(id)
+    const snapshot = await docRef.get()
+    const noteEdit = {
+        title: noteTitle,
+        description: noteDescription,
+        editAt: Date.now(),
+        createAt: snapshot.get('createAt'),
+        images: snapshot.get('images')
+    }
     try {
-        const docRef = db.collection('Notes').doc(id)
-        const snapshot = await docRef.get()
-        const noteEdit = {
-            title: noteTitle,
-            description: noteDescription,
-            editAt: Date.now(),
-            createAt: snapshot.get('createAt'),
-            images: snapshot.get('images')
-        }
-        new Promise(async (resolve, reject) => {
-            try {
-                if (req.files) {
-                    if (req.files.image) {
-                        // Loop store images to cloud
-                        const promiseArray = []
-                        for (const element of [].concat(req.files.image)) {
-                            // Set reference for image in cloud
-                            storageRef = ref(storage, `images/${newNote.userId}/${docRef.id}/${Date.now().toString()}-${element.name}`)
-                            promiseArray.push(
-                                uploadImage(storageRef, element.data)
-                            )
-                        }
-                        // Wait until all images uploaded
-                        noteEdit.images = await Promise.all(promiseArray)
-                    }
+        if (req.files) {
+            if (req.files.image) {
+                // Loop store images to cloud
+                const promiseArray = []
+                for (const element of [].concat(req.files.image)) {
+                    // Set reference for image in cloud
+                    storageRef = ref(storage, `images/${req.login.id}/${docRef.id}/${Date.now().toString()}-${element.name}`)
+                    promiseArray.push(
+                        uploadImage(storageRef, element.data)
+                    )
                 }
-                // Save note
-                resolve(noteEdit)
-            } catch (error) {
-                reject(error)
+                // Wait until all images uploaded
+                noteEdit.images = noteEdit.images.concat(await Promise.all(promiseArray)) 
             }
-        }).then(async (result) => {
-            await docRef.update(result)
-            const docSnapshot = await docRef.get()
-            const data = {
-                id: docSnapshot.id,
-                ...docSnapshot.data()
-            }
-            delete data.userId
-            return res.status(code.success).json({
-                code: code.success,
-                message: 'Edit note successfully',
-                data: data
-            })
-        }, (error) => {
-            return res.status(code.internal_server_error).json({
-                code: code.internal_server_error,
-                message: 'Edit note failed because of uploading images failed',
-                data: null
-            })
+        }
+        // Save note
+        await docRef.update(noteEdit)
+        const docSnapshot = await docRef.get()
+        const data = {
+            id: docSnapshot.id,
+            ...docSnapshot.data()
+        }
+        delete data.userId
+        return res.status(code.success).json({
+            code: code.success,
+            message: 'Edit note successfully',
+            data: data
         })
     } catch (error) {
         return res.status(code.internal_server_error).json({
             code: code.internal_server_error,
-            message: "Edit note failed",
+            message: error.message,
             data: null
         })
     }

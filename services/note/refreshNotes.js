@@ -54,7 +54,7 @@ const refreshNotes = async (req, res) => {
     } catch (error) {
         return res.status(code.notfound).json({
             code: code.notfound,
-            message: "Refresh notes failed",
+            message: error.message,
             data: null
         })
     }

@@ -12,12 +12,10 @@ const deleteNote = async (req, res) => {
     }
     try {
         const doc = db.collection('Notes').doc(id)
-        let snapshot = await doc.get()
-
         const storage = getStorage();
 
         // Create a reference under which you want to list
-        const listRef = ref(storage, `images/${snapshot.get('userId')}/${id}`);
+        const listRef = ref(storage, `images/${req.login.id}/${id}`);
 
         // Find all the prefixes and items.
         listAll(listRef)
@@ -27,17 +25,9 @@ const deleteNote = async (req, res) => {
                 promiseArray.push(deleteObject(itemRef))
             });
             await Promise.all(promiseArray)
-        }).catch((error) => {
-            console.log(error.message)
-            return res.status(code.bad_request).json({
-                code: code.bad_request,
-                message: 'Delete note failed',
-                data: null
-            })
-        });
+        })
 
-        snapshot = await doc.get()
-
+        const snapshot = await doc.get()
         const data = {
             id: snapshot.id,
             ... snapshot.data()
@@ -53,7 +43,7 @@ const deleteNote = async (req, res) => {
     } catch (error) {
         return res.status(code.internal_server_error).json({
             code: code.internal_server_error,
-            message: 'Delete note failed',
+            message: error.message,
             data: null
         })
     }

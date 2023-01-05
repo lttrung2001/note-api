@@ -35,7 +35,7 @@ const addNote = async (req, res) => {
                     // Set reference for image in cloud
                     storageRef = ref(storage, `images/${newNote.userId}/${docRef.id}/${Date.now().toString()}-${element.name}`)
                     promiseArray.push(
-                        uploadImage(storageRef, element.data)
+                        addImage(storageRef, element.data)
                     )
                 }
                 // Wait until all images uploaded
@@ -65,7 +65,7 @@ const addNote = async (req, res) => {
     }
 }
 
-const uploadImage = async (ref, data) => {
+const addImage = async (ref, data) => {
     await uploadBytes(ref, data, { contentType: 'image' })
     return getDownloadURL(ref)
 }

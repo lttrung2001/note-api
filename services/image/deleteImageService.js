@@ -1,7 +1,7 @@
 const code = require('../../constants/code')
 const { admin, db } = require('../../utils/admin')
 const { app } = require('../../utils/firebase')
-const { getStorage, ref, deleteObject, getDownloadURL } = require('firebase/storage')
+const { getStorage, ref, deleteObject } = require('firebase/storage')
 
 const deleteImage = async (req, res) => {
     const imageUrl = decodeURIComponent(req.query.url)
@@ -20,12 +20,15 @@ const deleteImage = async (req, res) => {
 
     try {
         const docRef = db.collection('Notes').doc(noteId)
-        let docSnapshot = await docRef.get()
-        const imagesAfterRemove = docSnapshot.get('images').filter((image) => { return image !== imageUrl })
+        const docSnapshot = await docRef.get()
+        let images = docSnapshot.get('images')
+        const deleteDocumentIndex = images.indexOf(imageUrl)
+        images = images.splice(deleteDocumentIndex, 1)
+        console.log(images)
         await Promise.all([
             deleteObject(imageRef),
             docRef.update({
-                images: imagesAfterRemove
+                images: images
             })
         ])
 
