@@ -4,7 +4,7 @@ const { app } = require('../../utils/firebase')
 const { getStorage, ref, deleteObject } = require('firebase/storage')
 
 const deleteImage = async (req, res) => {
-    const imageUrl = decodeURIComponent(req.query.url)
+    const imageUrl = req.query.url
     const noteId = req.query.noteId
 
     if (imageUrl == null || noteId == null || imageUrl === '' || noteId === '') {
@@ -23,6 +23,7 @@ const deleteImage = async (req, res) => {
         const docSnapshot = await docRef.get()
         let images = docSnapshot.get('images')
         const deleteDocumentIndex = images.indexOf(imageUrl)
+        console.log(deleteDocumentIndex)
         images.splice(deleteDocumentIndex, 1)
         await docRef.update({
             images: images
