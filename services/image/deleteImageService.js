@@ -23,8 +23,7 @@ const deleteImage = async (req, res) => {
         const docSnapshot = await docRef.get()
         let images = docSnapshot.get('images')
         const deleteDocumentIndex = images.indexOf(imageUrl)
-        images = images.splice(deleteDocumentIndex, 1)
-        console.log(images)
+        images.splice(deleteDocumentIndex, 1)
         await Promise.all([
             deleteObject(imageRef),
             docRef.update({
