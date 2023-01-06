@@ -39,7 +39,9 @@ const addNote = async (req, res) => {
                     )
                 }
                 // Wait until all images uploaded
-                newNote.images = await Promise.all(promiseArray)
+                newNote.images = (await Promise.all(promiseArray)).map((ref) => {
+                    getDownloadURL(ref)
+                })
             }
         }
         // Save note
@@ -66,8 +68,8 @@ const addNote = async (req, res) => {
 }
 
 const addImage = async (ref, data) => {
-    await uploadBytes(ref, data, { contentType: 'image' })
-    return getDownloadURL(ref)
+    uploadBytes(ref, data, { contentType: 'image' })
+    return ref
 }
 
 module.exports = addNote
