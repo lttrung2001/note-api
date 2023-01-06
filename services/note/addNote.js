@@ -69,7 +69,7 @@ const addNote = async (req, res) => {
 
 const addImage = async (ref, data) => {
     uploadBytes(ref, data, { contentType: 'image' })
-    return ref
+    return ref.fullPath
 }
 
 module.exports = addNote

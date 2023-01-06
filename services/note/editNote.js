@@ -71,7 +71,7 @@ const editNote = async (req, res) => {
 
 const uploadImage = async (ref, data) => {
     uploadBytes(ref, data, { contentType: 'image' })
-    return ref
+    return ref.storageRef.fullPath
 }
 
 module.exports = editNote
