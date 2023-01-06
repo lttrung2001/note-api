@@ -23,8 +23,14 @@ const getNotes = async (req, res) => {
         // Select note of userId
         const query = db.collection('Notes')
             .where('userId', '==', userId)
-
-        const lastPageIndex = Math.floor((await query.get()).docs.length/limit)
+        
+        let lastPageIndex = 0
+        const numberOfDocs = (await query.get()).docs.length
+        if (numberOfDocs % limit == 0) {
+            lastPageIndex = numberOfDocs / limit - 1
+        } else {
+            lastPageIndex = Math.floor(numberOfDocs / limit)
+        }
 
         // Paging
         const querySnapshot = await query
