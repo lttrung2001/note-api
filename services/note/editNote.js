@@ -38,11 +38,12 @@ const editNote = async (req, res) => {
                     // Set reference for image in cloud
                     storageRef = ref(storage, `images/${req.login.id}/${docRef.id}/${Date.now().toString()}-${element.name}`)
                     promiseArray.push(
-                        uploadImage(storageRef, storageRef.fullPath, element.data)
+                        uploadImage(storageRef, element.data)
                     )
                 }
                 // Wait until all images uploaded
-                noteEdit.images = noteEdit.images.concat((await Promise.all(promiseArray)).map(async (ref) => {
+                const refArray = await Promise.all(promiseArray)
+                noteEdit.images = noteEdit.images.concat(refArray.map(async (ref) => {
                     await getDownloadURL(ref)
                 })) 
             }
@@ -69,9 +70,9 @@ const editNote = async (req, res) => {
     }
 }
 
-const uploadImage = async (ref, fullPath, data) => {
+const uploadImage = async (ref, data) => {
     uploadBytes(ref, data, { contentType: 'image' })
-    return fullPath
+    return ref
 }
 
 module.exports = editNote
