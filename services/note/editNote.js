@@ -38,7 +38,7 @@ const editNote = async (req, res) => {
                     // Set reference for image in cloud
                     storageRef = ref(storage, `images/${req.login.id}/${docRef.id}/${Date.now().toString()}-${element.name}`)
                     promiseArray.push(
-                        uploadImage(storageRef, element.data)
+                        uploadImage(storageRef, storageRef.fullPath, element.data)
                     )
                 }
                 // Wait until all images uploaded
@@ -69,9 +69,9 @@ const editNote = async (req, res) => {
     }
 }
 
-const uploadImage = async (ref, data) => {
+const uploadImage = async (ref, fullPath, data) => {
     uploadBytes(ref, data, { contentType: 'image' })
-    return ref.storageRef.fullPath
+    return fullPath
 }
 
 module.exports = editNote
