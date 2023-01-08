@@ -7,7 +7,7 @@ const deleteImage = async (req, res) => {
     const imageUrl = req.query.url
     const noteId = req.query.noteId
 
-    if (imageUrl == null || noteId == null || imageUrl === '' || noteId === '') {
+    if (!(imageUrl && noteId)) {
         return res.status(code.bad_request).json({
             code: code.bad_request,
             message: 'All input are required',
